@@ -3,6 +3,7 @@ package monzo
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 /*
@@ -78,13 +79,18 @@ type RawTransaction struct {
 	Merchant json.RawMessage `json:"merchant"`
 }
 
-func (cl *Client) Transactions(accountID string, expandMerchant bool) ([]*Transaction, error) {
+func (cl *Client) Transactions(accountID string, expandMerchant bool, pagination bool, limit int) ([]*Transaction, error) {
 	args := map[string]string{
 		"account_id": accountID,
 	}
 	if expandMerchant {
 		args["expand[]"] = "merchant"
 	}
+
+	if pagination {
+		args["limit"] = strconv.Itoa(limit)
+	}
+
 	rsp := &struct {
 		Transactions []*RawTransaction `json:"transactions"`
 	}{}
